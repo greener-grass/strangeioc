@@ -119,9 +119,11 @@ namespace strange.extensions.mediation.impl
 		{
 			const int LOOP_MAX = 100;
 			int loopLimiter = 0;
-			GameObject go = view.gameObject;
 
-			while (loopLimiter < LOOP_MAX)
+			Transform parent = view.transform.parent;
+			GameObject go = (parent != null) ? parent.gameObject : null;
+
+			while (go != null && loopLimiter < LOOP_MAX)
 			{
 				loopLimiter++;
 
