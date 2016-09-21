@@ -119,46 +119,49 @@ namespace strange.extensions.mediation.impl
 		{
 			const int LOOP_MAX = 100;
 			int loopLimiter = 0;
-			Transform trans = view.gameObject.transform;
-			while (trans.parent != null && loopLimiter < LOOP_MAX)
+			GameObject go = view.gameObject;
+
+			while (loopLimiter < LOOP_MAX)
 			{
 				loopLimiter++;
-				trans = trans.parent;
-				if (trans.gameObject.GetComponent<ContextView>() != null)
+
+				ContextView contextView = go.GetComponentInParent<ContextView>();
+				if (contextView == null)
+					break;
+
+				go = contextView.gameObject;
+				IContext context = contextView.context;
+				if (context != null)
 				{
-					ContextView contextView = trans.gameObject.GetComponent<ContextView>() as ContextView;
-					if (contextView.context != null)
+					bool success = true;
+
+					switch (type)
 					{
-						IContext context = contextView.context;
-						bool success = true;
+						case BubbleType.Add:
+							context.AddView(view);
+							registeredWithContext = true;
+							break;
+						case BubbleType.Remove:
+							context.RemoveView(view);
+							break;
+						case BubbleType.Enable:
+							context.EnableView(view);
+							break;
+						case BubbleType.Disable:
+							context.DisableView(view);
+							break;
+						default:
+							success = false;
+							break;
+					}
 
-						switch (type)
-						{
-							case BubbleType.Add:
-								context.AddView(view);
-								registeredWithContext = true;
-								break;
-							case BubbleType.Remove:
-								context.RemoveView(view);
-								break;
-							case BubbleType.Enable:
-								context.EnableView(view);
-								break;
-							case BubbleType.Disable:
-								context.DisableView(view);
-								break;
-							default:
-								success = false;
-								break;
-						}
-
-						if (success)
-						{
-							return;
-						}
+					if (success)
+					{
+						return;
 					}
 				}
 			}
+
 			if (requiresContext && finalTry && type == BubbleType.Add)
 			{
 				//last ditch. If there's a Context anywhere, we'll use it!
@@ -170,8 +173,8 @@ namespace strange.extensions.mediation.impl
 				}
 
 				string msg = (loopLimiter == LOOP_MAX) ?
-					msg = "A view couldn't find a context. Loop limit reached." :
-						msg = "A view was added with no context. Views must be added into the hierarchy of their ContextView lest all hell break loose.";
+					"A view couldn't find a context. Loop limit reached." :
+					"A view was added with no context. Views must be added into the hierarchy of their ContextView lest all hell break loose.";
 				msg += "\nView: " + view.ToString();
 				throw new MediationException(msg,
 					MediationExceptionType.NO_CONTEXT);
