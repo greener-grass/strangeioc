@@ -31,6 +31,8 @@ using strange.extensions.dispatcher.api;
 using strange.extensions.injector.api;
 using strange.extensions.injector.impl;
 using strange.framework.api;
+using strange.extensions.reflector.impl;
+using strange.extensions.reflector.api;
 
 namespace strange.extensions.context.impl
 {
@@ -42,7 +44,7 @@ namespace strange.extensions.context.impl
 		/// A Binder that handles dependency injection binding and instantiation
 		public ICrossContextInjectionBinder injectionBinder
 		{
-			get { return _injectionBinder ?? (_injectionBinder = new CrossContextInjectionBinder()); }
+			get { return _injectionBinder ?? (_injectionBinder = new CrossContextInjectionBinder(GetReflector())); }
 		    set { _injectionBinder = value; }
 		}
 
@@ -58,6 +60,13 @@ namespace strange.extensions.context.impl
 		/// dispatcher and you'll receive it.
 	    protected IEventDispatcher _crossContextDispatcher;
 
+		static protected IReflectionBinder _reflector;
+		protected IReflectionBinder GetReflector()
+		{
+			if (_reflector == null)
+				_reflector = new ReflectionBinder();
+			return _reflector;
+		}
         
 		public CrossContext() : base()
 		{}
@@ -79,7 +88,7 @@ namespace strange.extensions.context.impl
 			base.addCoreComponents();
 			if (injectionBinder.CrossContextBinder == null)  //Only null if it could not find a parent context / firstContext
 			{
-				injectionBinder.CrossContextBinder = new CrossContextInjectionBinder();
+				injectionBinder.CrossContextBinder = new CrossContextInjectionBinder(GetReflector());
 			}
 
 			if (firstContext == this)

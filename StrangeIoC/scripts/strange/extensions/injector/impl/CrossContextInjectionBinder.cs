@@ -25,6 +25,7 @@
 
 using strange.extensions.injector.api;
 using strange.framework.api;
+using strange.extensions.reflector.api;
 
 namespace strange.extensions.injector.impl
 {
@@ -32,7 +33,7 @@ namespace strange.extensions.injector.impl
 	{
 		public IInjectionBinder CrossContextBinder { get; set; }
 
-		public CrossContextInjectionBinder() : base()
+		public CrossContextInjectionBinder(IReflectionBinder reflector) : base(reflector)
 		{
 		}
 
