@@ -77,7 +77,7 @@ namespace strange.extensions.mediation.impl
 		/// The View will attempt to connect to the Context at this moment.
 		protected virtual void Awake()
 		{
-			if (autoRegisterWithContext && !registeredWithContext)
+			if (Application.isPlaying && autoRegisterWithContext && !registeredWithContext)
 				bubbleToContext(this, BubbleType.Add, false);
 		}
 
@@ -86,7 +86,7 @@ namespace strange.extensions.mediation.impl
 		/// attempt to connect again at this moment.
 		protected virtual void Start()
 		{
-			if (autoRegisterWithContext && !registeredWithContext)
+			if (Application.isPlaying && autoRegisterWithContext && !registeredWithContext)
 				bubbleToContext(this, BubbleType.Add, true);
 		}
 
@@ -95,21 +95,24 @@ namespace strange.extensions.mediation.impl
 		/// destroyed.
 		protected virtual void OnDestroy()
 		{
-			bubbleToContext(this, BubbleType.Remove, false);
+			if (Application.isPlaying)
+				bubbleToContext(this, BubbleType.Remove, false);
 		}
 
 		/// A MonoBehaviour OnEnable handler
 		/// The View will inform the Context that it was enabled
 		protected virtual void OnEnable()
 		{
-			bubbleToContext(this, BubbleType.Enable, false);
+			if (Application.isPlaying)
+				bubbleToContext(this, BubbleType.Enable, false);
 		}
 
 		/// A MonoBehaviour OnDisable handler
 		/// The View will inform the Context that it was disabled
 		protected virtual void OnDisable()
 		{
-			bubbleToContext(this, BubbleType.Disable, false);
+			if (Application.isPlaying)
+				bubbleToContext(this, BubbleType.Disable, false);
 		}
 
 		/// Recurses through Transform.parent to find the GameObject to which ContextView is attached
