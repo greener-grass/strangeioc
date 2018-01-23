@@ -151,10 +151,20 @@ namespace strange.extensions.injector.impl
 				foreach(KeyValuePair<object, IBinding> bPair in dict)
 				{
 					IBinding binding = bPair.Value as IBinding;
-					Type t = (binding.value is Type) ? (Type) binding.value : binding.value.GetType();
-					if (list.IndexOf(t) == -1)
+					Type t = null;
+
+					if (binding.value == null)
 					{
-						list.Add (t);
+						t = (pair.Key is Type) ? (Type) pair.Key : pair.Key.GetType();
+					}
+					else if (binding.value is Type)
+					{
+						t = (Type) binding.value;
+					}
+
+					if (t != null && list.IndexOf(t) == -1)
+					{
+						list.Add(t);
 					}
 				}
 			}
@@ -164,10 +174,10 @@ namespace strange.extensions.injector.impl
 		public int Reflect(List<Type> list)
 		{
 			int count = 0;
-			foreach(Type t in list)
+			foreach (Type t in list)
 			{
 				//Reflector won't permit primitive types, so screen them
-				if (t.IsPrimitive || t == typeof(Decimal) || t == typeof(string))
+				if (!t.IsClass || t.IsPrimitive || t == typeof(Decimal) || t == typeof(string))
 				{
 					continue;
 				}
