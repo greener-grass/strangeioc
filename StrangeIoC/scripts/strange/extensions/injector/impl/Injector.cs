@@ -48,12 +48,13 @@ namespace strange.extensions.injector.impl
 {
 	public class Injector : IInjector
 	{
-		private Dictionary<IInjectionBinding, int> infinityLock;
+		private readonly Dictionary<IInjectionBinding, int> infinityLock;
 		private const int INFINITY_LIMIT = 10;
 		
 		public Injector ()
 		{
 			factory = new InjectorFactory();
+			infinityLock = new Dictionary<IInjectionBinding, int>(4);
 		}
 
 		public IInjectorFactory factory{ get; set;}
@@ -109,7 +110,7 @@ namespace strange.extensions.injector.impl
 					TryInject(binding, retv);
 				}
 			}
-			infinityLock = null; //Clear our infinity lock so the next time we instantiate we don't consider this a circular dependency
+			infinityLock.Clear(); //Clear our infinity lock so the next time we instantiate we don't consider this a circular dependency
 
 			return retv;
 		}
@@ -333,10 +334,6 @@ namespace strange.extensions.injector.impl
 			if (binding == null)
 			{
 				return;
-			}
-			if (infinityLock == null)
-			{
-				infinityLock = new Dictionary<IInjectionBinding, int> ();
 			}
 			if(infinityLock.ContainsKey(binding) == false)
 			{
