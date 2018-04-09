@@ -106,20 +106,23 @@ namespace strange.extensions.mediation.impl
 		/// different handling than EditorWindows)
 		protected virtual void InjectViewAndChildren(IView view)
 		{
-			IView[] views = GetViews(view);
-			int aa = views.Length;
-			for (int a = aa - 1; a > -1; a--)
+			using (var views = fertilizer.util.ListPool<IView>.Disposable())
 			{
-				IView iView = views[a] as IView;
-				if (iView != null)
+				GetViews(view, views);
+				int aa = views.List.Count;
+				for (int a = aa - 1; a > -1; a--)
 				{
-					if (iView.autoRegisterWithContext && iView.registeredWithContext)
+					IView iView = views.List[a] as IView;
+					if (iView != null)
 					{
-						continue;
+						if (iView.autoRegisterWithContext && iView.registeredWithContext)
+						{
+							continue;
+						}
+						iView.registeredWithContext = true;
+						if (iView.Equals(view) == false)
+							Trigger(MediationEvent.AWAKE, iView);
 					}
-					iView.registeredWithContext = true;
-					if (iView.Equals(view) == false)
-						Trigger(MediationEvent.AWAKE, iView);
 				}
 			}
 			injectionBinder.injector.Inject(view, false);
@@ -293,7 +296,7 @@ namespace strange.extensions.mediation.impl
 		protected abstract object DisableMediator(IView view, Type mediatorType);
 
 		/// Retrieve all views including children for this view
-		protected abstract IView[] GetViews(IView view);
+		protected abstract void GetViews(IView view, List<IView> result);
 
 		/// Whether or not an instantiated Mediator of this type exists
 		protected abstract bool HasMediator(IView view, Type mediatorType);
