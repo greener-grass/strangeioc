@@ -114,7 +114,8 @@ namespace strange.extensions.injector.impl
 				Type keyType = (aKey is Type) ? aKey as Type : aKey.GetType();
 				if (keyType.IsAssignableFrom(objType) == false && (HasGenericAssignableFrom(keyType, objType) == false))
 				{
-					throw new InjectionException("Injection cannot bind a value that does not extend or implement the binding type.", InjectionExceptionType.ILLEGAL_BINDING_VALUE);
+					string msg = $"Injection cannot bind a value that does not extend or implement the binding type (binding type: {keyType}, value type: {objType}).";
+					throw new InjectionException(msg, InjectionExceptionType.ILLEGAL_BINDING_VALUE);
 				}
 			}
 			To(o);
