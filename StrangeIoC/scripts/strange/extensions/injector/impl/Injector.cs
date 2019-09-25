@@ -342,9 +342,18 @@ namespace strange.extensions.injector.impl
 				infinityLock.Add (binding, 0);
 			}
 			infinityLock [binding] = infinityLock [binding] + 1;
-			if (infinityLock [binding] > INFINITY_LIMIT)
+			if (infinityLock[binding] > INFINITY_LIMIT)
 			{
-				throw new InjectionException ("There appears to be a circular dependency. Terminating loop.", InjectionExceptionType.CIRCULAR_DEPENDENCY);
+				StringBuilder log = new StringBuilder($"There appears to be a circular dependency in binding value ({binding.value}). Terminating loop. infinityLock values:");
+				foreach (var infLock in infinityLock)
+				{
+					if (infLock.Value > 1)
+					{
+						log.Append($"\nBinding value ({infLock.Key.value}) has count {infLock.Value}");
+					}
+				}
+
+				throw new InjectionException(log.ToString(), InjectionExceptionType.CIRCULAR_DEPENDENCY);
 			}
 		}
 	}
