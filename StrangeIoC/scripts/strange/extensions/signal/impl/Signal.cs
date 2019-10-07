@@ -149,6 +149,8 @@ namespace strange.extensions.signal.impl
 		{
 			if (Listener != null)
 				Listener -= callback;
+			if (OnceListener != null)
+				OnceListener -= callback;
 		}
 		public override List<Type> GetTypes()
 		{
