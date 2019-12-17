@@ -64,6 +64,7 @@
 
 using System;
 
+[JetBrains.Annotations.MeansImplicitUse]
 [AttributeUsage(AttributeTargets.Property, 
 		AllowMultiple = false,
 		Inherited = true)]
@@ -103,6 +104,7 @@ public class Construct: Attribute
 }
 
 //Tag [PostConstruct] to perform post-injection construction actions
+[JetBrains.Annotations.MeansImplicitUse]
 [AttributeUsage(AttributeTargets.Method, 
 		AllowMultiple = false,
 		Inherited = true)]
