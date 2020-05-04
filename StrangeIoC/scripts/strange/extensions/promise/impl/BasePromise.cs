@@ -135,10 +135,9 @@ namespace strange.extensions.promise.impl
 		/// <param name="callback">A callback to add to the queue.</param>
 		protected Action AddUnique(Action listeners, Action callback)
 		{
-			if (listeners == null || !listeners.GetInvocationList().Contains(callback))
-			{
-				listeners += callback;
-			}
+			if (listeners != null)
+				listeners -= callback;
+			listeners += callback;
 			return listeners;
 		}
 
@@ -150,10 +149,9 @@ namespace strange.extensions.promise.impl
 		/// <param name="callback">A callback to add to the queue.</param>
 		protected Action<T> AddUnique<T>(Action<T> listeners, Action<T> callback)
 		{
-			if (listeners == null || !listeners.GetInvocationList().Contains(callback))
-			{
-				listeners += callback;
-			}
+			if (listeners != null)
+				listeners -= callback;
+			listeners += callback;
 			return listeners;
 		}
 
